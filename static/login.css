@@ -1,0 +1,105 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.login-container {
+    display: grid;
+    gap: 20px;
+    padding: 30px;
+    width: 400px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.login-container:hover {
+    transform: translateY(-10px);
+}
+
+.login-header {
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+
+.form-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-form label {
+    font-weight: bold;
+}
+
+.login-form input[type='text'], .login-form input[type='password'] {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    transition: box-shadow 0.3s ease;
+}
+
+.login-form input[type='text']:focus, .login-form input[type='password']:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 1px 6px rgba(0, 123, 255, 0.4);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.login-button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+@keyframes gradient-background {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 40000px 40000px;
+    animation: gradient-background 15s ease infinite;
+}
+
+.login-container {
+    backdrop-filter: blur(5px); /* Это создаст эффект размытия для фонового градиента */
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

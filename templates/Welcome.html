@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Приветственная страница</title>
+    <link rel="stylesheet" href="{% static 'welcome.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Добро пожаловать на наш сайт</h1>
+        </div>
+    </header>
+
+    <div class="main">
+        <img src="{% static 'welcome.png' %}" alt="Welcome image" class="welcome-image">
+        <h2>Почему стоит выбрать наш сайт?</h2>
+        <p>
+            Мы предлагаем удобный и быстрый способ найти подходящего репетитора для вас. Настройте фильтры под себя и найдите своего идеального репетитора уже сейчас!
+        </p>
+        <a href="/main/" class="main-button">Перейти на главную страницу</a>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2023 Мой сайт</p>
+        </div>
+    </footer>
+</body>
+</html>

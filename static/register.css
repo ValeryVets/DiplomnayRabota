@@ -1,0 +1,177 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.register-container {
+    display: grid;
+    gap: 20px;
+    padding: 30px;
+    width: 500px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Добавлено */
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+
+.register-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box; /* Добавлено */
+    padding-right: 20px; /* Добавлено */
+}
+
+.form-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.input-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.register-form label {
+    font-weight: bold;
+}
+
+.register-form input[type='text'], .register-form input[type='password'], .register-form input[type='email'] {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    transition: box-shadow 0.3s ease;
+    width: 200px;
+
+}
+
+.register-form input[type='text']:focus, .register-form input[type='password']:focus, .register-form input[type='email']:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 1px 6px rgba(0, 123, 255, 0.4);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.register-button {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.register-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.validation-message {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 97.5%;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #ffcccc;
+  color: #ff0000;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.validation-message.show {
+  display: block;
+}
+
+.validation-message.value-missing {
+  display: none;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-form input[type='checkbox'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.register-form input[type='checkbox']:checked {
+    background-color: #007BFF;
+    border-color: #007BFF;
+}
+
+
+.register-form .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.register-form .checkbox-label:hover {
+    text-decoration: underline;
+}
+
+.register-form label {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+@keyframes gradient-background {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 40000px 40000px;
+    animation: gradient-background 15s ease infinite;
+}
+
+.register-container {
+    backdrop-filter: blur(5px); /* Это создаст эффект размытия для фонового градиента */
+}

@@ -1,0 +1,432 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.tutor-dashboard{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.StudentCard{
+    width: 250px;
+    height: 300px;
+    background-color: #eee;
+    margin: 1%;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 5px 20px 50px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+}
+
+.StudentCardFuter{
+    display: flex;
+}
+
+.StudentCardFuter form{
+    margin: 5px;
+}
+
+.StudentCardHeader{
+    display: flex;
+}
+
+.StudentCardHeader img{
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.StudentCardMain{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.StudentCardMain p {
+    font-size: 0.8rem;
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.StudentCards{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#StudentCards1{
+    display: none;
+}
+
+#StudentCards2{
+    display: none;
+}
+
+#StudentCards3{
+    display: none;
+}
+
+.schedule{
+    display: none;
+    background-color: #fff;
+    margin: 2%;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+}
+
+.lesson{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.lesson:last-child {
+    border-bottom: none;
+}
+
+.lesson p{
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.weekday{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #007BFF;
+    color: #fff;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
+
+header {
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 50px; /* Примерная высота. Настройте под свои потребности */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    z-index: 999; /* Убедитесь, что хедер и футер всегда сверху */
+    box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.15);
+}
+
+footer {
+    width: 100%;
+    height: 50px; /* Примерная высота. Настройте под свои потребности */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    z-index: 999; /* Убедитесь, что хедер и футер всегда сверху */
+    box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.15);
+}
+
+
+header {
+    top: 0;
+}
+
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+nav {
+    margin-right: 50px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover {
+    color: #ccc;
+}
+
+h2{
+    display: block !important;
+    font-size: 1.5em !important;
+    margin-block-start: 0.83em !important;
+    margin-block-end: 0.83em !important;
+    margin-inline-start: 0px !important;
+    margin-inline-end: 0px !important;
+    font-weight: bold !important;
+}
+h1{
+    display: block;
+    font-size: 2em !important;
+    margin-block-start: 0.67em !important;
+    margin-block-end: 0.67em !important;
+    margin-inline-start: 0px !important;
+    margin-inline-end: 0px !important;
+    font-weight: bold !important;
+}
+
+.header-content{
+    font-size: 0.7em !important ;
+    padding: 0 1%;
+}
+
+.footer-content{
+    font-size: 0.7em !important ;
+    padding: 0 1%;
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.grid-container {
+    display: flex;
+    gap: 20px;
+}
+
+#profile-section {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.right-section {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 20px;
+}
+
+.tasks-section, .lessons-section, .students-section, .requests-section {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.teacher {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.teacherAvatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.teacherName {
+    margin-top: 10px;
+}
+
+
+.taskInfo {
+    flex-grow: 2;
+    display: flex;
+    justify-content: space-between;
+}
+
+.lef-card {
+    width: 400px;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.avatar img {
+    width: 100%;
+    height: auto;
+}
+
+label[for="id_avatar"] {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: url({% static 'pencil_icon.png' %}) no-repeat center;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.info-field {
+    display: flex;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+#edit-button {
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.2em;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#edit-button:hover {
+    background-color: #0056b3;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+input[type="text"], input[type="email"],input[type="number"], select , textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+button {
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.newTask {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+@media screen and (max-width: 800px) {
+    .header-content {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .header-right nav ul {
+        flex-direction: column;
+        align-items: start;
+        margin-top: 10px;
+    }
+
+    .header-content, .footer-content {
+        font-size: 0.6em;
+    }
+
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .right-section {
+        grid-template-rows: repeat(3, auto);
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .task {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .teacherName {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .taskInfo {
+        margin-top: 10px;
+    }
+}
+
+
+@keyframes gradient-background {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 40000px 40000px;
+    animation: gradient-background 15s ease-in-out infinite;
+}
+
+
+.red-card {
+  background-color: #ff978f;
+}

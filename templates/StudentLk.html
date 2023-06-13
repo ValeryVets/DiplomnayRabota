@@ -1,0 +1,299 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Личный аккаунт</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'studentlk.css' %}">
+</head>
+<body>
+    <div class="student-dashboard">
+
+        <header>
+            <div class="header-content">
+                <h1>Мой сайт</h1>
+                <nav>
+                    <ul>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'tutorapp:main' %}">Главная</a></li>
+                            <li><a href="{% url 'tutorapp:student_dashboard' %}">Личный кабинет</a></li>
+                            <li><a href="{% url 'tutorapp:logout' %}">Выйти</a></li>
+                        {% else %}
+                            <li><a href="{% url 'tutorapp:login' %}">Войти</a></li>
+                            <li><a href="{% url 'tutorapp:register' %}">Зарегистрироваться</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <div class="grid-container">
+                <section class="profile-section">
+                    <div class="lef-card">
+                        <div class="avatar" style="position:relative;">
+                            {% if student.avatar %}
+                                <img src="{{ student.avatar.url }}">
+                            {% else %}
+                                <img src="{% static 'avatar.jpg' %}">
+                            {% endif %}
+                            <form id="avatar-form" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label for="id_avatar" style="cursor:pointer;position:absolute;bottom:10px;right:10px;">
+                                    <img src="{% static 'pencil_icon.png' %}" style="width:20px;">
+                                </label>
+                                {{ form.avatar }}
+                            </form>
+                        </div>
+
+                        <div id="info">
+                            <div class="info-field">
+                                <h2>{{ student.name }}</h2>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ student.email }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ student.age }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ student.phone }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ student.parent_phone }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ student.parent_name }}</p>
+                            </div>
+                            <button id="edit-button">Изменить</button>
+                        </div>
+
+                        <div id="edit-form" style="display:none;">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form.name }}
+                                {{ form.email }}
+                                {{ form.age }}
+                                {{ form.phone }}
+                                {{ form.parent_phone }}
+                                {{ form.parent_name }}
+                                <button type="submit">Принять</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="right-section">
+                    <section class="tasks-section">
+                        <div id="taskheader">
+                            <h2>Домашняя работа</h2>
+                        </div>
+                        <div class="StudentCards" id="StudentCards1">
+                        {% for lesson in lessons %}
+                            {% if lesson.homework %}
+                                <div class="StudentCard">
+                                    <div class="StudentCardHeader">
+                                        <p>{{ lesson.title }}</p>
+                                    </div>
+                                    <div class="StudentCardMain">
+                                        <p>Урок: {{ lesson.title }}</p>
+                                        <p>{{ lesson.homework.title }}</p>
+                                        <p>Дэдлайн: {{ lesson.homework.deadline }}</p>
+                                    </div>
+                                    {% if request.user.student in lesson.homework.completed.all %}
+                                        <div class="StudentCardFuter">
+                                            <p>Выполнено</p>
+                                        </div>
+                                    {% else %}
+                                        <div class="StudentCardFuter">
+                                            <a type="button" class="btn btn-primary" href="{% url 'tutorapp:homework_page' lesson.homework.id %}">Выполнить домашнее задание</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </section>
+
+                    <section class="lessons-section">
+                        <div id = "scheduleheader">
+                            <h2>Расписание</h2>
+                        </div>
+                        <div class="schedule" id = "schedule">
+                            {% for weekday, lessons in sorted_lessons_weekday.items %}
+                                <div class="weekday">
+                                    <h3>{{ weekday }}</h3>
+                                </div>
+                                <div class="lessons">
+                                    {% for lesson_info in lessons %}
+                                        <div class="lesson">
+                                            <p>{{ lesson_info.start_time }} - {{ lesson_info.end_time }} </p>
+                                            <p>{{ lesson_info.title }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+
+                    <section class="students-section">
+                        <div id = "studentsheader">
+                            <h2>Преподаватели</h2>
+                        </div>
+                        <ul id = "StudentCards2">
+                            {% for tutor in tutors %}
+                                <div class="StudentCards">
+                                    <div class="StudentCard">
+                                        {% if tutor.avatar %}
+                                            <div class="StudentCardHeader">
+                                                <img src="{{ tutor.avatar.url }}">
+                                            </div>
+                                        {% else %}
+                                            <div class="StudentCardHeader">
+                                                <img src="{% static 'avatar.jpg' %}">
+                                            </div>
+                                        {% endif %}
+                                        <div class="StudentCardMain">
+                                            <p>{{ tutor.name }}</p>
+                                        </div>
+                                        <div class="StudentCardFuter">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#studentModal{{ tutor.id }}">
+                                                Показать полностью
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="studentModal{{ tutor.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel"><img src="{% if tutor.avatar %}{{ tutor.avatar.url }}{% else %}{% static 'avatar.jpg' %}{% endif %}" style="height: 100px; width: 100px; border-radius: 50%; object-fit: cover;"> {{ tutor.name }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Возраст: {{ tutor.age }}</p>
+                                                <p>Телефон: {{ tutor.phone }}</p>
+                                                <p>Предмет: {{ tutor.subject }}</p>
+                                                <p>Цена в час: {{ tutor.hourly_rate }} руб.</p>
+                                                <p>Квалификация: {{ tutor.qualification }}</p>
+                                                <p>Биография: {{ tutor.bio }}</p>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>Все права защищены © 2023</p>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+            $("#edit-button").click(function() {
+                $("#info").hide();
+                $("#edit-form").show();
+            });
+
+            // Обработчик события изменения для поля выбора файла
+            $('#id_avatar').on('change', function () {
+                var formData = new FormData();
+                formData.append('avatar', $('#id_avatar')[0].files[0]);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                $.ajax({
+                    url: '{% url "tutorapp:update_avatar" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data['success']) {
+                            location.reload();
+                        } else {
+                            alert('Ошибка не получилось загрузить картинку');
+                        }
+                    },
+                });
+            });
+        });
+
+        $(document).ready(function(){
+
+            if (localStorage.getItem('taskheaderState') === 'visible') {
+                $('#StudentCards1').css('display', 'flex');
+            }
+
+            if (localStorage.getItem('studentsheaderState') === 'visible') {
+                $('#StudentCards2').css('display', 'flex');
+            }
+
+            if (localStorage.getItem('scheduleState') === 'visible') {
+                $('#schedule').css('display', 'flex');
+            }
+
+
+            // Добавляем обработчики событий для каждого заголовка
+            $("#taskheader").click(function(){
+                $("#StudentCards1").toggle();
+                if ($("#StudentCards1").is(":visible")) {
+                    $('#StudentCards1').css('display', 'flex');
+                    localStorage.setItem('taskheaderState', 'visible');
+                } else {
+                    $('#StudentCards1').css('display', 'none');
+                    localStorage.removeItem('taskheaderState');
+                }
+            });
+
+            $("#scheduleheader").click(function(){
+                $("#schedule").toggle();
+                if ($("#schedule").is(":visible")) {
+                    $('#schedule').css('display', 'flex');
+                    localStorage.setItem('scheduleState', 'visible');
+                } else {
+                    $('#schedule').css('display', 'none');
+                    localStorage.removeItem('scheduleState');
+                }
+            });
+
+            $("#studentsheader").click(function(){
+                $("#StudentCards2").toggle();
+                if ($("#StudentCards2").is(":visible")) {
+                    $('#StudentCards2').css('display', 'flex');
+                    localStorage.setItem('studentsheaderState', 'visible');
+                } else  {
+                    $('#StudentCards2').css('display', 'none');
+                    localStorage.removeItem('studentsheaderState');
+                }
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

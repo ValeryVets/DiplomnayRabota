@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Личный аккаунт</title>
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+<body>
+  <div class="login-container lef-card">
+    <div class="login-header">
+      <h2>Вход</h2>
+    </div>
+    <form method="post" class="login-form">
+      {% csrf_token %}
+      <div class="form-field">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+      </div>
+      <div class="form-field">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+      </div>
+      <button type="submit" class="login-button">Login</button>
+    </form>
+  </div>
+</body>
+</html>

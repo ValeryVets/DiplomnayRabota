@@ -1,0 +1,147 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Личный аккаунт</title>
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Мой сайт</h1>
+            <nav>
+                <ul>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'tutorapp:main' %}">Главная</a></li>
+                        {% if user.tutor %}
+                            <li><a href="{% url 'tutorapp:tutor_dashboard' %}">Личный кабинет</a></li>
+                        {% endif %}
+                        {% if user.student %}
+                            <li><a href="{% url 'tutorapp:student_dashboard' %}">Личный кабинет</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'tutorapp:logout' %}">Выйти</a></li>
+                    {% else %}
+                        <li><a href="{% url 'tutorapp:login' %}">Войти</a></li>
+                        <li><a href="{% url 'tutorapp:register' %}">Зарегистрироваться</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main">
+
+        <div class="settings-outer">
+            <div class="settings">
+                <h2>Фильтры поиска:</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <p><label>Предмет: </label>{{ form.subject }}</p>
+                    <p><label>Максимальная цена: </label> {{ form.price }}</p>
+                        {% for choice in form.days_of_week %}
+                            <div class="checkbox-div">
+                                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                {{ choice.tag }}
+                                <input type="time" name="start_time_{{choice.id_for_label}}" class="start-time" style="visibility: hidden;">
+                                <input type="time" name="end_time_{{choice.id_for_label}}" class="end-time" style="visibility: hidden;">
+                            </div>
+                        {% endfor %}
+                    <button type="submit" name="filter_button">Применить фильтры</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mini-card-container">
+            {% for tutor in tutors %}
+            <div class="mini-card" data-id="{{ tutor.id }}" onclick="showCard(this.getAttribute('data-id'))">
+                <div class="mini-avatar-name">
+                    {% if tutor.avatar %}
+                        <img src="{{ tutor.avatar.url }}" class="mini-avatar">
+                    {% else %}
+                        <img src="{% static 'avatar.jpg' %}" class="mini-avatar">
+                    {% endif %}
+                    <h3>{{ tutor.name }}</h3>
+                </div>
+                <p class="mini-description">{{ tutor.bio }}</p>
+                <div class="price-enroll">
+                    <p class="price">{{ tutor.hourly_rate }} руб.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="overlay" id="overlay" style="display: none;">
+            <div class="card-container" id="card-container">
+                <div class="card">
+                    <div id="tutorContent">
+                        <div class="avatar">
+                            <img class="avatar" id="avatar">
+                        </div>
+                        <div class="info">
+                            <h2 id="tutor-name"></h2>
+                            <p id="tutor-email"></p>
+                            <p id="tutor-age"></p>
+                            <p id="tutor-phone"></p>
+                            <p id="tutor-subject"></p>
+                            <p id="tutor-hourly_rate:"></p>
+                            <p id="tutor-qualification"></p>
+                            <p id="tutor-bio"></p>
+                        </div>
+                        <div class="card-buttons">
+                            <button class="card-button" id="enrollButton">Записаться</button>
+                        </div>
+                    </div>
+                    <!-- Форма записи к репетитору -->
+                    <div id="enrollForm" style="display: none;">
+                        <h2>Форма записи</h2>
+                        <form id="enrollment_form" method="POST" class="enrollment_form">
+                            {% csrf_token %}
+                            <p>{{ enrollment_form.start_date.label_tag }} {{ enrollment_form.start_date }}</p>
+                            <p>{{ enrollment_form.end_date.label_tag }} {{ enrollment_form.end_date }}</p>
+                            <p>{{ enrollment_form.days_of_week.label_tag }}</p>
+                            {% for choice in enrollment_form.days_of_week %}
+                                <div class="checkbox">
+                                    <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                    {{ choice.tag }}
+                                    <input type="time" name="start_{{choice.id_for_label}}" class="start" style="visibility: hidden;">
+                                    <input type="number" name="duration_{{choice.id_for_label}}" class="duration" style="visibility: hidden;">
+                                </div>
+                            {% endfor %}
+                            <input type="hidden" id="tutor_id" name="tutor_id">
+                            <button type="submit" name="enrollment_button" class="settings button">Отправить заявку</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+
+
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2023 Мой сайт</p>
+        </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'main.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="{% static 'register.css' %}">
+</head>
+<body>
+  <div class="register-container">
+    <div class="register-header">
+      <h2>Регистрация</h2>
+    </div>
+    <form method="post" class="register-form" id="register-form" novalidate>
+      {% csrf_token %}
+      <div class="form-field">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        <div class="validation-message" id="username-validation"></div>
+      </div>
+      <div class="form-field">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        <div class="validation-message" id="email-validation"></div>
+      </div>
+      <div class="form-field">
+        {{ form.password1.label_tag }}
+        {{ form.password1 }}
+        <div class="validation-message" id="password1-validation"></div>
+      </div>
+      <div class="form-field">
+        {{ form.password2.label_tag }}
+        {{ form.password2 }}
+        <div class="validation-message" id="password2-validation"></div>
+      </div>
+      <div class="form-field">
+        {{ form.is_tutor.label_tag }}
+        {{ form.is_tutor }}
+      </div>
+      <button type="submit" class="register-button">Регистрация</button>
+    </form>
+  </div>
+  <script>
+    window.onload = function() {
+      const form = document.getElementById('register-form');
+
+      form.addEventListener('input', function(event) {
+        const target = event.target;
+        if (target.nodeName.toLowerCase() !== 'input') return;
+
+        const validationMessage = target.parentNode.querySelector('.validation-message');
+        if (target.validity.valid) {
+          hideValidationMessage(validationMessage);
+        } else if (target.validity.valueMissing) {
+          displayValidationMessage(validationMessage, 'Пожалуйста, заполните это поле.');
+        } else if (target.validity.patternMismatch) {
+          displayValidationMessage(validationMessage, target.title);
+        }
+
+        if (target.name === 'password2') {
+          const password1 = document.querySelector('input[name="password1"]');
+          if (target.value !== password1.value) {
+            displayValidationMessage(validationMessage, 'Пароли не совпадают');
+          } else {
+            hideValidationMessage(validationMessage);
+          }
+        }
+      });
+
+      form.addEventListener('focusin', function(event) { // event triggered when an input field is in focus
+        const target = event.target;
+        if (target.nodeName.toLowerCase() !== 'input') return;
+
+        const validationMessage = target.parentNode.querySelector('.validation-message');
+        if (!target.validity.valid) {
+          if (target.validity.valueMissing) {
+            displayValidationMessage(validationMessage, 'Пожалуйста, заполните это поле.');
+          } else if (target.validity.patternMismatch) {
+            displayValidationMessage(validationMessage, target.title);
+          }
+        }
+
+        if (target.name === 'password2') {
+          const password1 = document.querySelector('input[name="password1"]');
+          if (target.value !== password1.value) {
+            displayValidationMessage(validationMessage, 'Пароли не совпадают');
+          }
+        }
+      });
+
+      form.addEventListener('focusout', function(event) { // event triggered when an input field loses focus
+        const target = event.target;
+        if (target.nodeName.toLowerCase() !== 'input') return;
+        const validationMessage = target.parentNode.querySelector('.validation-message');
+        hideValidationMessage(validationMessage);
+      });
+
+      form.addEventListener('submit', function(event) {
+        const inputs = form.querySelectorAll('input');
+        let hasError = false;
+
+        inputs.forEach(function(input) {
+          const validationMessage = input.parentNode.querySelector('.validation-message');
+          if (!input.validity.valid) {
+            if (input.validity.valueMissing) {
+              displayValidationMessage(validationMessage, 'Пожалуйста, заполните это поле.');
+            } else if (input.validity.patternMismatch) {
+              displayValidationMessage(validationMessage, input.title);
+            }
+            hasError = true;
+          } else {
+            hideValidationMessage(validationMessage);
+          }
+        });
+
+        const password1 = document.querySelector('input[name="password1"]');
+        const password2 = document.querySelector('input[name="password2"]');
+        const passwordValidationMessage = document.getElementById('password2-validation');
+        if (password1.value !== password2.value) {
+          displayValidationMessage(passwordValidationMessage, 'Пароли не совпадают');
+          hasError = true;
+        } else {
+          hideValidationMessage(passwordValidationMessage);
+        }
+
+        if (hasError) {
+          event.preventDefault();
+        }
+      });
+
+      function displayValidationMessage(element, message) {
+        element.textContent = message;
+        element.classList.add('show');
+      }
+
+      function hideValidationMessage(element) {
+        element.textContent = '';
+        element.classList.remove('show');
+      }
+    };
+
+  </script>
+</body>
+</html>

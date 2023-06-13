@@ -1,0 +1,463 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет преподавателя</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'tutorlk.css' %}">
+</head>
+<body>
+    <div class="tutor-dashboard">
+        <header>
+            <div class="header-content">
+                <h1>Мой сайт</h1>
+                <nav>
+                    <ul>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'tutorapp:main' %}">Главная</a></li>
+                            <li><a href="{% url 'tutorapp:tutor_dashboard' %}">Личный кабинет</a></li>
+                            <li><a href="{% url 'tutorapp:logout' %}">Выйти</a></li>
+                        {% else %}
+                            <li><a href="{% url 'tutorapp:login' %}">Войти</a></li>
+                            <li><a href="{% url 'tutorapp:register' %}">Зарегистрироваться</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <div class="grid-container">
+                <section class="profile-section">
+                    <div class="lef-card">
+                        <div class="avatar" style="position:relative;">
+                            {% if tutor.avatar %}
+                                <img src="{{ tutor.avatar.url }}">
+                            {% else %}
+                                <img src="{% static 'avatar.jpg' %}">
+                            {% endif %}
+                            <form id="avatar-form" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label for="id_avatar" style="cursor:pointer;position:absolute;bottom:10px;right:10px;">
+                                    <img src="{% static 'pencil_icon.png' %}" style="width:20px;">
+                                </label>
+                            </form>
+                        </div>
+
+                        <div id="info">
+                            <div class="info-field">
+                                <h2>{{ tutor.name }}</h2>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.email }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.age }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.phone }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.subject }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.hourly_rate }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.qualification }}</p>
+                            </div>
+                            <div class="info-field">
+                                <p>{{ tutor.bio }}</p>
+                            </div>
+                            <button id="edit-button">Изменить</button>
+                        </div>
+
+                        <div id="edit-form" style="display:none;">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form.name }}
+                                {{ form.email }}
+                                {{ form.age }}
+                                {{ form.phone }}
+                                {{ form.subject }}
+                                {{ form.hourly_rate }}
+                                {{ form.qualification }}
+                                {{ form.bio }}
+                                {{ form.avatar }}
+                                <button type="submit">Принять</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <div class="right-section">
+                    <section class="tasks-section">
+                        <div id="taskheader">
+                            <h2>Задания для студентов</h2>
+                        </div>
+                        <div class="StudentCards" id="StudentCards1">
+                        {% for lesson in lessons %}
+                            {% if not lesson.homework.checked %}
+                                <div class="StudentCard" id = "{{ lesson.id }}">
+                                    <div class="StudentCardHeader">
+                                        <p>{{ lesson.title }}</p>
+                                    </div>
+                                    <div class="StudentCardMain">
+                                        <p>{{ lesson.student_name }}</p>
+                                        <p>{{ lesson.formatted_date }}</p>
+                                        {% if lesson.homework %}
+                                            <p>Урок: {{ lesson.homework.title }}</p>
+                                            <p>Дэдлайн: {{ lesson.homework.deadline }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% if lesson.homework %}
+                                        <div class="StudentCardFuter">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tasksModal{{lesson.id}}">
+                                                Показать задания
+                                            </button>
+                                        </div>
+                                    {% else %}
+                                        <div class="StudentCardFuter">
+                                            <a type="button" class="btn btn-primary" href="{% url 'tutorapp:create_homework' lesson.id %}">Добавить домашнее задание</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    </section>
+
+
+                    <!-- Modals -->
+                    {% for lesson in lessons %}
+                        <!-- Task modal -->
+                        <div class="modal fade" id="tasksModal{{lesson.id}}" tabindex="-1" role="dialog" aria-labelledby="tasksModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="tasksModalLabel">Задания</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Здесь будут отображаться задания -->
+                                        {% for task in lesson.tasks %}
+                                            <div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Задание: {{ task.exercise }}</h5>
+                                                    <p class="card-text">Ответ преподавателя: {{ task.answer }}</p>
+                                                    {% if task.student_answer %}
+                                                        <p>Ответ студента: {{ task.student_answer.answer }}</p>
+                                                        {% if task.student_answer.image %}
+                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{task.student_answer.id}}">
+                                                                Показать решение
+                                                            </button>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        {% if lesson.homework %}
+                                            <div class="modal-footer">
+                                                <form action="{% url 'tutorapp:check_homework' lesson.homework.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-primary">Проверено</button>
+                                                </form>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% for task in lesson.tasks %}
+                            {% if task.student_answer and task.student_answer.image %}
+                                <div class="modal fade" id="exampleModal{{task.student_answer.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <img src="{{ task.student_answer.image.url }}" class="img-fluid">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
+
+                    <section class="lessons-section">
+                        <div id = "scheduleheader">
+                            <h2>Расписание</h2>
+                        </div>
+                        <div class="schedule" id = "schedule">
+                            {% for weekday, lessons in sorted_lessons_weekday.items %}
+                                <div class="weekday">
+                                    <h3>{{ weekday }}</h3>
+                                </div>
+                                <div class="lessons">
+                                    {% for lesson_info in lessons %}
+                                        <div class="lesson">
+                                            <p>{{ lesson_info.start_time }} - {{ lesson_info.end_time }} </p>
+                                            <p>{{ lesson_info.title }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+
+
+                    <section class="students-section">
+                        <div id = "studentsheader">
+                            <h2>Студенты</h2>
+                        </div>
+                        <ul id = "StudentCards2">
+                            {% for student in students %}
+                                <div class="StudentCards">
+                                    <div class="StudentCard">
+                                        {% if student.avatar %}
+                                            <div class="StudentCardHeader">
+                                                <img src="{{ student.avatar.url }}">
+                                            </div>
+                                        {% else %}
+                                            <div class="StudentCardHeader">
+                                                <img src="{% static 'avatar.jpg' %}">
+                                            </div>
+                                        {% endif %}
+                                        <div class="StudentCardMain">
+                                            <p>{{ student.name }}</p>
+                                        </div>
+                                        <div class="StudentCardFuter">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#studentModal{{ student.id }}">
+                                                Показать полностью
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal fade" id="studentModal{{ student.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel"><img src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'avatar.jpg' %}{% endif %}" style="height: 100px; width: 100px; border-radius: 50%; object-fit: cover;"> {{ student.name }}</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Возраст: {{ student.age }}</p>
+                                                <p>Телефон: {{ student.phone }}</p>
+                                                <p>Почта: {{ student.email }}</p>
+                                                <p>Телефон Родителя: {{ student.parent_phone }}</p>
+                                                <p>Имя Родителя: {{ student.parent_name }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                    <section class="requests-section">
+                        <div id = "requestsheader">
+                            <h2>Заявки на занятия</h2>
+                        </div>
+                        <ul id = "StudentCards3">
+                            {% for enrollment in display_enrollments %}
+                            <div class="StudentCards">
+                                <div class="StudentCard">
+                                    <div class="StudentCardHeader">
+                                        <p>{{ enrollment.subject_name }} </p>
+                                    </div>
+                                    <div class="StudentCardMain">
+                                        <p>{{ enrollment.student_name }} </p>
+                                        <p>с {{ enrollment.start_date }} до {{ enrollment.end_date }}</p>
+                                        {% for weekday, time_and_duration in enrollment.days_and_times %}
+                                            <p> {{ weekday }}: {{ time_and_duration.0 }} ({{ time_and_duration.1 }} минут)</p>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="StudentCardFuter">
+                                        <form  method="post" action="{% url 'tutorapp:accept_request' enrollment.student_name enrollment.subject_name %}">
+                                            {% csrf_token %}
+                                            <input type="submit" class="btn btn-success" value="Принять">
+                                        </form>
+                                        <form method="post" action="{% url 'tutorapp:decline_request' enrollment.student_name enrollment.subject_name %}">
+                                            {% csrf_token %}
+                                            <input type="submit" class="btn btn-danger" value="Отказаться">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </ul>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>Все права защищены © 2023</p>
+            </div>
+        </footer>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        // Получаем текущую дату
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); // Устанавливаем время текущей даты на начало дня
+
+        // Проходимся по каждой карточке
+        const studentCards = document.getElementsByClassName('StudentCard');
+        Array.from(studentCards).forEach((card) => {
+          // Получаем идентификатор карточки
+          const cardId = card.id;
+
+          // Получаем элемент с датой дедлайна
+          const deadlineElement = card.querySelector('.StudentCardMain p:last-child');
+
+          if (deadlineElement) {
+            // Получаем текст дедлайна (например, "Дэдлайн: 2023-06-30")
+            const deadlineText = deadlineElement.innerText;
+            // Извлекаем дату из текста дедлайна
+            const deadlineDate = new Date(deadlineText.split(': ')[1]);
+
+            // Устанавливаем время дедлайна на начало дня
+            deadlineDate.setHours(0, 0, 0, 0);
+
+            // Сравниваем текущую дату с дедлайном для данной карточки
+            if (currentDate.getTime() > deadlineDate.getTime()) {
+              // Если дедлайн просрочен, добавляем класс "red-card" к данной карточке
+              card.classList.add('red-card');
+            }
+          }
+        });
+
+
+
+
+        $(document).ready(function(){
+
+            if (localStorage.getItem('taskheaderState') === 'visible') {
+                $('#StudentCards1').css('display', 'flex');
+            }
+
+            if (localStorage.getItem('studentsheaderState') === 'visible') {
+                $('#StudentCards2').css('display', 'flex');
+            }
+
+            if (localStorage.getItem('scheduleState') === 'visible') {
+                $('#schedule').css('display', 'flex');
+            }
+
+            if (localStorage.getItem('requestsheaderState') === 'visible') {
+                $('#StudentCards3').css('display', 'flex');
+            }
+
+
+            // Добавляем обработчики событий для каждого заголовка
+            $("#taskheader").click(function(){
+                $("#StudentCards1").toggle();
+                if ($("#StudentCards1").is(":visible")) {
+                    $('#StudentCards1').css('display', 'flex');
+                    localStorage.setItem('taskheaderState', 'visible');
+                } else {
+                    $('#StudentCards1').css('display', 'none');
+                    localStorage.removeItem('taskheaderState');
+                }
+            });
+
+            $("#scheduleheader").click(function(){
+                $("#schedule").toggle();
+                if ($("#schedule").is(":visible")) {
+                    $('#schedule').css('display', 'flex');
+                    localStorage.setItem('scheduleState', 'visible');
+                } else {
+                    $('#schedule').css('display', 'none');
+                    localStorage.removeItem('scheduleState');
+                }
+            });
+
+            $("#studentsheader").click(function(){
+                $("#StudentCards2").toggle();
+                if ($("#StudentCards2").is(":visible")) {
+                    $('#StudentCards2').css('display', 'flex');
+                    localStorage.setItem('studentsheaderState', 'visible');
+                } else  {
+                    $('#StudentCards2').css('display', 'none');
+                    localStorage.removeItem('studentsheaderState');
+                }
+            });
+
+            $("#requestsheader").click(function(){
+                $("#StudentCards3").toggle();
+                if ($("#StudentCards3").is(":visible")) {
+                    $('#StudentCards3').css('display', 'flex');
+                    localStorage.setItem('requestsheaderState', 'visible');
+                } else {
+                    $('#StudentCards3').css('display', 'none');
+                    localStorage.removeItem('requestsheaderState');
+                }
+            });
+        });
+
+        $(document).ready(function() {
+
+            $("#edit-button").click(function() {
+                $("#info").hide();
+                $("#edit-form").show();
+            });
+
+            // Обработчик события изменения для поля выбора файла
+            $('#id_avatar').on('change', function () {
+                var formData = new FormData();
+                formData.append('avatar', $('#id_avatar')[0].files[0]);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                $.ajax({
+                    url: '{% url "tutorapp:update_avatar" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data['success']) {
+                            location.reload();
+                        } else {
+                            alert('Ошибка не получилось загрузить картинку');
+                        }
+                    },
+                });
+            });
+        });
+
+    </script>
+
+    <script>
+        document.getElementById('id_avatar').style.display = 'none';
+    </script>
+
+
+
+</body>
+</html>
